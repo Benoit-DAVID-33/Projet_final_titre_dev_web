@@ -1,0 +1,86 @@
+<?php
+	ini_set('display_errors', 'on');
+	require_once "includes/core/globals.php";
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="description" content="formulaire CinemALL">
+	<?php require "includes/partials/page_head.phtml"; ?>
+	<link href='https://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet'>
+	<link rel="stylesheet" href="public/styles/styles.css" type="text/css">
+</head>
+<body>
+	<main>
+		<nav>
+			<?php require_once "includes/partials/navbar.phtml"; ?>
+		</nav>
+		<header>
+			<?php if ($_GET['action'] === 'edit'): ?>
+				<h1>Formulaire de modification</h1>
+			<?php else: ?>
+				<h1>Formulaire d'inscription</h1>
+			<?php endif; ?> 
+		</header>
+		<form class="form" action="#" method="post" enctype="multipart/form-data">
+			<div>
+				<?php if ($_GET['action'] === 'edit'): ?>
+				<label for="champEmail">*Email : </label>
+				<input type="email" name="chEmail" id="champEmail" value="<?= htmlspecialchars($unePersonne->getEmail()) ?>">
+			<?php else: ?>
+				<label for="champEmail">Email : </label>
+				<input type="email" name="chEmail" id="champEmail">
+			<?php endif; ?> 
+			</div>
+			<!--<div>
+				<label for="champPassword">*Mot de passe : </label>
+				<input type="password" name="chPassword" id="champPassword">
+			</div> -->
+			<?php if ($_GET['action'] === 'edit'): ?>
+			    <div>
+			        <label for="champOldPassword">*Ancien mot de passe : </label>
+			        <input type="password" name="chOldPassword" id="champOldPassword">
+			    </div>
+			    <div>
+			        <label for="champNewPassword">*Nouveau mot de passe : </label>
+			        <input type="password" name="chNewPassword" id="champNewPassword">
+			    </div>
+			<?php else: ?>
+			    <div>
+			        <label for="champPassword">Password : </label>
+			        <input type="password" name="chPassword" id="champPassword">
+			    </div>
+			<?php endif; ?> 
+
+			<div>
+				<label for="champDateNaissance">Date de naissance : </label>
+				<input type="date" name="chDateNaissance" id="champDateNaissance" value="<?= htmlspecialchars($unePersonne->
+				getDateNaissance()->format('Y-m-d')) ?>">
+			</div>
+			<div class="avatarForm">
+				<label for="chAvatar">Selectionner un avatar:</label>
+				<input id="max_id" type="hidden" name="MAX_FILE_SIZE" value="2500000">
+				<input type="file" id="chAvatar" name="chAvatar">
+				<span>Ancien avatar : <?= substr($unePersonne->getAvatar(), -10) ?></span>
+
+				<img src="<?= ($unePersonne->getAvatar() ? $unePersonne->getAvatar() : 'public/avatar/default.png') ?>" class="avatar" alt="avatar">
+
+			</div>
+				<button type="submit">Valider</button>
+				<button type="reset">Réinitialiser</button>
+		</form>
+			<?php if(isset($message)) :?>
+				<span class="message"><?= $message; ?><span class="closeMessage">&times;</span></span>
+			<?php endif; ?>
+			
+			<?php if(isset($_GET['message'])) : ?>
+				<span class="message"><?= $_GET['message'] ?><span class="closeMessage">&times;</span></span>
+			<?php endif; ?>
+		<footer>
+			<?php require_once "includes/partials/footer.phtml"; ?>
+		</footer>
+	</main>
+<script src="public/scripts/script.js"></script>
+<script src="public/scripts/script_form_view.js"></script>
+</body>
+</html>

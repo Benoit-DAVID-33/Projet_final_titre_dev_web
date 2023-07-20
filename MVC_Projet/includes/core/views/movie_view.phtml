@@ -1,0 +1,87 @@
+<?php
+	ini_set('display_errors', 'on');
+	require_once "includes/core/globals.php";
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="description" content="Page info film CinemALL">
+	<?php require "includes/partials/page_head.phtml"; ?>
+	<link href='https://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet'>
+	<link rel="stylesheet" href="public/styles/styles.css" type="text/css">
+</head>
+<body>
+	<nav>
+		<?php require_once "includes/partials/navbar.phtml"; ?>
+	</nav>
+	<header>
+		<?php if(isset($_GET['message'])) : ?>
+			<span class="message" id="message"><?= $_GET['message'] ?><span class="closeMessage">&times;</span></span>
+		<?php endif; ?>
+		<h1 id="titleMoviePage">
+			
+		</h1>
+	</header>
+	<main class="content">
+		<div class="movieContainer">
+        
+    	</div>
+    	<div class="videoContainer">
+    		
+    	</div>
+    	<div class="commenter">
+			<form method="POST" action="?page=commentaire&action=add&id=<?= htmlspecialchars($_GET['id'], ENT_QUOTES); ?>" class="commenterForm">
+				<textarea name="contenu" id="commentaire" placeholder="Écriver un commentaire"></textarea>
+				<?php
+					if (isset($_SESSION['login']) && $_SESSION['login']) : ?>
+					<!--	// L'utilisateur est connecté -->
+						<input type="submit" value="Ajouter un commentaire" class="addCom"/>
+					<?php else : ?>
+					<!--	// L'utilisateur n'est pas connecté -->
+						<p class="comWarning">Vous devez vous connecter pour poster un commentaire !!!</p>
+						<input type="submit" value="Ajouter un commentaire" disabled class="addCom" title="Connexion obligatoire!">
+				<?php endif; ?>
+			</form>
+			<div class="commentaireList">
+			    <?php if (!empty($commentaires)) : ?>
+			        <?php foreach (array_reverse($commentaires) as $commentaire) : ?>
+			            <?php 
+			                $date_commentaire = date("d/m/Y H:i", strtotime($commentaire['date_commentaire'])); 
+			                $email_parts = explode('@', $commentaire['email']);
+			                $username = $email_parts[0]; // récupère la première partie de l'e-mail
+			            ?>
+			            <div class="commentaire">
+			                <p><?= htmlspecialchars($username) ?> a commenté le <?= htmlspecialchars($date_commentaire) ?></p>
+			                 <p><?= nl2br(htmlspecialchars(strip_tags($commentaire['contenu']))) ?></p>
+			                <?php if (isset($_SESSION['login']) && ($_SESSION['login'] === $commentaire['email'] || $_SESSION['isAdmin'] == 1)) : ?>
+			                        <button class="modifier-commentaire">Modifier</button>
+			                        <a href="?page=commentaire&action=delete&id=<?= intval($commentaire['id']); ?>" class="linkCom"><button>Supprimer</button></a>
+			                <?php endif ;?>
+			            </div>
+			            <div class="commentaire-modification">
+			                <form action="?page=commentaire&action=modify&id=<?= htmlspecialchars($_GET['id'], ENT_QUOTES); ?>" method="POST">
+			                    <textarea name="contenu"><?= htmlspecialchars($commentaire['contenu'], ENT_QUOTES); ?></textarea>
+			                    <input type="hidden" name="id" value="<?= intval($commentaire['id']); ?>">
+			                    <input type="submit" value="Enregistrer">
+			                </form>
+			            </div>
+			            <?php endforeach; ?>
+			        <?php else : ?>
+			        <p class="comDefault">Aucun commentaire pour le moment. 😭</p>
+			    <?php endif; ?>
+			</div>
+		</div>
+		<div id="modalWarning" class="modalWarning">
+		  <div class="modal-content-MovieView">
+		    <span class="closeWarning">&times;</span>
+		    <p>Vous devez être connecté pour effectuer cette action.</p>
+		  </div>
+		</div>
+	</main>
+	<footer>
+		<?php require_once "includes/partials/footer.phtml"; ?>
+	</footer>
+<script src="public/scripts/script.js"></script>
+<script src="public/scripts/script_movie_view.js"></script>
+</body>
+</html>
